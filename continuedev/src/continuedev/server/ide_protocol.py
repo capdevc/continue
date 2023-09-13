@@ -161,5 +161,9 @@ class AbstractIdeProtocolServer(ABC):
     async def getTerminalContents(self, commands: int = -1) -> str:
         """Get the terminal contents"""
 
+    @abstractmethod
+    async def getTabCompletion(self, prompt: str) -> str:
+        """Get a tab autocomplete suggestion"""
+
     workspace_directory: str
     unique_id: str

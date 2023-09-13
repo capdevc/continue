@@ -51,15 +51,25 @@ class Ollama(LLM):
         await self._client_session.close()
 
     async def _stream_complete(self, prompt, options):
+        ollama_opts = {
+            "temperature": options.temperature,
+            "num_predict": options.max_tokens,
+        }
+        if options.stop is not None and len(options.stop) > 0:
+            ollama_opts["stop"] = options.stop[0]
+
         async with self._client_session.post(
             f"{self.server_url}/api/generate",
             json={
                 "template": prompt,
                 "model": self.model,
-                "system": self.system_message,
-                "options": {"temperature": options.temperature},
+                "system": self.system_message
+                if self.system_message.strip() != ""
+                else None,
+                "options": ollama_opts,
             },
         ) as resp:
+            completion = ""
             async for line in resp.content.iter_any():
                 if line:
                     json_chunk = line.decode("utf-8")
@@ -68,4 +78,10 @@ class Ollama(LLM):
                         if chunk.strip() != "":
                             j = json.loads(chunk)
                             if "response" in j:
+                                completion += j["response"]
+                                if options.stop:
+                                    for s in options.stop:
+                                        if s in completion:
+                                            return
+
                                 yield j["response"]

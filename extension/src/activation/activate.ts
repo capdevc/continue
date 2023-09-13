@@ -10,6 +10,7 @@ import fetch from "node-fetch";
 import { registerAllCodeLensProviders } from "../lang-server/codeLens";
 import { registerAllCommands } from "../commands";
 import registerQuickFixProvider from "../lang-server/codeActions";
+import { ContinueCompletionProvider } from "../lang-server/completionProvider";
 
 const PACKAGE_JSON_RAW_GITHUB_URL =
   "https://raw.githubusercontent.com/continuedev/continue/HEAD/extension/package.json";
@@ -66,6 +67,14 @@ export async function activateExtension(context: vscode.ExtensionContext) {
   registerAllCodeLensProviders(context);
   registerAllCommands(context);
   registerQuickFixProvider();
+
+  // Register inline completion provider
+  context.subscriptions.push(
+    vscode.languages.registerInlineCompletionItemProvider(
+      [{ pattern: "**" }],
+      new ContinueCompletionProvider()
+    )
+  );
 
   // Start the server
   const sessionIdPromise = (async () => {

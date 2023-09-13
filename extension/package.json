@@ -22,7 +22,7 @@
   "description": "Open-source copilot for software development - bring the power of ChatGPT to your IDE",
   "publisher": "Continue",
   "engines": {
-    "vscode": "^1.67.0"
+    "vscode": "^1.70.0"
   },
   "categories": [
     "Programming Languages",
@@ -225,7 +225,7 @@
     "@types/node-fetch": "^2.6.2",
     "@types/react-dom": "^18.2.4",
     "@types/request": "^2.48.8",
-    "@types/vscode": "1.67",
+    "@types/vscode": "1.70",
     "@types/ws": "^8.5.4",
     "@typescript-eslint/eslint-plugin": "^5.45.0",
     "@typescript-eslint/parser": "^5.45.0",

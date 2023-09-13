@@ -354,6 +354,7 @@ class IdeProtocolClient {
         break;
       case "getSessionId":
       case "connected":
+      case "getTabCompletion":
         break;
       default:
         throw Error("Unknown message type:" + messageType);
@@ -510,6 +511,20 @@ class IdeProtocolClient {
     console.log("New Continue session with ID: ", resp.sessionId);
     this.sessionId = resp.sessionId;
     return resp.sessionId;
+  }
+
+  async getTabCompletion(
+    filepath: string,
+    position: vscode.Position
+  ): Promise<string> {
+    const resp = await this.messenger?.sendAndReceive("getTabCompletion", {
+      filepath,
+      position: {
+        line: position.line,
+        character: position.character,
+      },
+    });
+    return resp.completion;
   }
 
   acceptRejectSuggestion(accept: boolean, key: SuggestionRanges) {

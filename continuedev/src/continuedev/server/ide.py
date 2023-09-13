@@ -36,6 +36,7 @@ from ..models.filesystem_edit import (
     RenameFile,
     SequentialFileSystemEdit,
 )
+from ..models.main import Position
 from ..plugins.steps.core.core import DisplayErrorStep
 from .gui import session_manager
 from .ide_protocol import AbstractIdeProtocolServer
@@ -221,6 +222,8 @@ class IdeProtocolServer(AbstractIdeProtocolServer):
     async def handle_json(self, message_type: str, data: Any):
         if message_type == "getSessionId":
             await self.getSessionId()
+        elif message_type == "getTabCompletion":
+            await self.getTabCompletion(data["filepath"], Position(**data["position"]))
         elif message_type == "setFileOpen":
             await self.setFileOpen(data["filepath"], data["open"])
         elif message_type == "setSuggestionsLocked":
@@ -312,6 +315,21 @@ class IdeProtocolServer(AbstractIdeProtocolServer):
         session_id = new_session.session_id
         logger.debug(f"Sending session id: {session_id}")
         await self._send_json("getSessionId", {"sessionId": session_id})
+
+    async def getTabCompletion(self, filepath: str, position: Position) -> str:
+        if autopilot := self.__get_autopilot():
+            file_contents = await autopilot.ide.readFile(filepath)
+            idx = position.to_index(file_contents)
+            prefix = file_contents[:idx]
+            suffix = file_contents[idx:]
+            prompt = f"<PRE> {prefix} <SUF> {suffix} <MID>"
+            # prompt = f"{prefix}<FILL>{suffix}"
+            completion = await autopilot.continue_sdk.models.default.complete(
+                prompt, max_tokens=100, raw=True, stop=["\n", "</PRE>", "<EOT>"]
+            )
+            await self._send_json("getTabCompletion", {"completion": completion})
+            print(prompt)
+            print(completion)
 
     async def highlightCode(self, range_in_file: RangeInFile, color: str = "#00ff0022"):
         await self._send_json(
