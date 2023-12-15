@@ -18,7 +18,7 @@ jobs:
 
     steps:
       - name: Check out code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -82,7 +82,7 @@ jobs:
     steps:
       # 1. Build the Pyinstaller binary
       - name: Check-out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
         uses: actions/setup-python@v4
@@ -294,7 +294,7 @@ jobs:
     steps:
       # 0. Setup git
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up Git
         run: |
