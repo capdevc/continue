@@ -136,7 +136,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
         with:
           name: wheels
       - name: Publish to PyPI
@@ -409,7 +409,7 @@ jobs:
         run: git pull origin main
 
       # 1. Download the artifacts
-      - uses: actions/download-artifact@v3
+      - uses: actions/download-artifact@v4
 
       # 2. Publish the extension to VS Code Marketplace
       - name: Publish (VS Code Marketplace)
@@ -466,19 +466,19 @@ jobs:
 
       # 5. Download binaries and upload to S3
       - name: Download Linux build
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: LinuxBinary
           path: exe/linux
 
       - name: Download macOS build
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: macOSBinary
           path: exe/mac
 
       - name: Download Windows build
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
           name: WindowsBinary
           path: exe/windows
